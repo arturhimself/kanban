@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent } from 'react';
 import { useDispatch } from 'react-redux';
+import { useModal } from '@/hooks/useModal';
 import { editCard as editCardAction } from '@/redux/actions/cards';
 import { 
   Card,
@@ -71,19 +72,15 @@ export const KanbanCard: React.FC<KanbanCardProps> = React.memo(({
   statusId,
 }) => {
   const dispatch = useDispatch();
-  const [openModal, setOpenModal] = useState(false);
+  const { modal, handleModal } = useModal(false);
   const [editCard, setEditCard] = useState(false);
   const [cardName, setCardName] = useState(name);
   const [cardDescription, setCardDescription] = useState(description);
   const classes = useStyles();
 
-  const handleModal = () => {
-    setOpenModal(!openModal);
-  }
-
   const handleModalClose = () => {
     setEditCard(false);
-    setOpenModal(!openModal);
+    handleModal();
   }
 
   const handleEditCard = () => {
@@ -126,7 +123,7 @@ export const KanbanCard: React.FC<KanbanCardProps> = React.memo(({
       </Box>
 
       <Dialog
-        open={openModal || editCard}
+        open={modal || editCard}
         fullWidth
         maxWidth="sm"
         aria-labelledby="dialog-title"

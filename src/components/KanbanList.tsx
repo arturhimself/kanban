@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, SyntheticEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useModal } from '@/hooks/useModal';
 import { FormDataType } from '@/types/types';
 import { CardType } from '@/types/cards';
 import { RootState } from '@/redux/reducers/.'
@@ -53,7 +54,7 @@ export const KanbanList: React.FC<KanbanListProps> = React.memo(({
   const dispatch = useDispatch();
   const { items: allCards } = useSelector(({ cards }: RootState) => cards);
   const { sortBy } = useSelector(({ sort }: RootState) => sort);
-  const [openModal, setOpenModal] = useState(false);
+  const { modal, handleModal } = useModal(false);
   const [createForm, setCreateForm] = useState({ name: '', description: '' });
 
   const handleCreate = (ev: SyntheticEvent) => {
@@ -72,11 +73,7 @@ export const KanbanList: React.FC<KanbanListProps> = React.memo(({
       sortBy,
     }));
 
-    setOpenModal(!openModal);
-  }
-
-  const handleCreateModal = () => {
-    setOpenModal(!openModal);
+    handleModal();
   }
 
   const handleCreateForm = (ev: ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +103,7 @@ export const KanbanList: React.FC<KanbanListProps> = React.memo(({
             variant="outlined" 
             color="primary" 
             size="small"
-            onClick={handleCreateModal}
+            onClick={handleModal}
             startIcon={<Add />}
           >
             ADD
@@ -116,14 +113,14 @@ export const KanbanList: React.FC<KanbanListProps> = React.memo(({
       </Box>
 
       <Dialog 
-        open={openModal} 
-        onClose={handleCreateModal}
+        open={modal} 
+        onClose={handleModal}
         fullWidth
         maxWidth="sm"
         aria-labelledby="dialog-title"
       >
         <Close
-          onClick={handleCreateModal} 
+          onClick={handleModal} 
           className={classes.closeButton}
         />
         <DialogTitle id="dialog-title">Create task</DialogTitle>

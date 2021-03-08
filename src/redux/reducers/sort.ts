@@ -7,8 +7,7 @@ const initialState: SortState = {
   }
 };
 
-export const sort = 
-  (
+export const sort = (
     state = initialState, 
     action: SortAction,
 ): SortState => {
