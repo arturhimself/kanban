@@ -1,4 +1,5 @@
 {
+  "homepage": "http://arturhimself.github.io/kanban",
   "name": "kanban-test",
   "version": "1.0.0",
   "private": true,
@@ -11,7 +12,9 @@
     "test:coverage": "npx jest --collectCoverage",
     "lint": "npx eslint --ext js,.jsx,.ts,.tsx ./src/**",
     "ts:check": "npx tsc -p tsconfig.json --noEmit",
-    "server": "npx json-server --watch public/db.json --port 3004"
+    "server": "npx json-server --watch public/db.json --port 3004",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "repository": {
     "type": "git",
@@ -55,6 +58,7 @@
     "eslint-plugin-jest": "^24.1.3",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.0.0",
+    "gh-pages": "^3.1.0",
     "html-webpack-plugin": "^4.5.1",
     "jest": "^25.5.4",
     "mini-css-extract-plugin": "^1.3.9",

@@ -15,7 +15,7 @@ module.exports = {
     },
   },
   output: {
-    path: path.join(__dirname, '/dist'),
+    path: path.join(__dirname, '/build'),
     filename: './index.js',
     publicPath: '/',
     // https://github.com/GoogleChromeLabs/worker-plugin/issues/20
@@ -23,10 +23,6 @@ module.exports = {
   },
   module: {
     rules: [
-      // {
-      //   test: /\.scss$/i,
-      //   use: [MiniCssExtractPlugin.loader, 'sass-loader'],
-      // },
       {
         test: /\.css$/i,
         use: [
