@@ -1,9 +1,9 @@
 import { 
   CardsActionTypes, 
   CardType,
-  SortParams,
   SetSortedCardsActionPayload,
-} from '@/types/types';
+} from '@/types/cards';
+import { SortParams } from '@/types/sort';
 
 export const setCards = (payload: CardType[]): CardsActionTypes => ({
   type: 'SET_CARDS',
@@ -29,7 +29,7 @@ export const fetchCards = (
   endpoint: string, 
   sortBy: SortParams
 ) => async (dispatch: any) => {
-  const response = await fetch(`http://localhost:3004/${endpoint}?_sort=${sortBy.type}&_order=${sortBy.order}`);
+  const response = await fetch(`https://my-json-server.typicode.com/arturhimself/kanban/${endpoint}?_sort=${sortBy.type}&_order=${sortBy.order}`);
   const cards = await response.json();
   dispatch(setCards(cards));
 };

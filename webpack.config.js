@@ -3,7 +3,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WorkerPlugin = require('worker-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-module.exports = {
+const config = {
+  mode: 'development',
   entry: './src/index.tsx',
   devtool: 'source-map',
   resolve: {
@@ -17,7 +18,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, '/build'),
     filename: 'index.js',
-    publicPath: './',
+    publicPath: '/',
     // https://github.com/GoogleChromeLabs/worker-plugin/issues/20
     globalObject: "(typeof self!='undefined'?self:global)",
   },
@@ -47,4 +48,11 @@ module.exports = {
     }),
     new MiniCssExtractPlugin(),
   ],
+};
+
+module.exports = (env, argv) => {
+  if (argv.mode === 'production') {
+    config.output.publicPath = './';
+  }
+  return config;
 };

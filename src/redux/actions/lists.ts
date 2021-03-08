@@ -1,7 +1,7 @@
 import { 
   SetListsAction,
   KanbanListType,
-} from '@/types/types';
+} from '@/types/lists';
 
 export const setLists = (payload: KanbanListType[]): SetListsAction => ({
   type: 'SET_LISTS',
@@ -9,7 +9,7 @@ export const setLists = (payload: KanbanListType[]): SetListsAction => ({
 });
 
 export const fetchLists = (endpoint: string) => async (dispatch: any) => {
-  const response = await fetch(`http://localhost:3004/${endpoint}`);
+  const response = await fetch(`https://my-json-server.typicode.com/arturhimself/kanban/${endpoint}`);
   const lists = await response.json();
   dispatch(setLists(lists));
 };
