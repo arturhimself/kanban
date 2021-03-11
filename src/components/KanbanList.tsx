@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, SyntheticEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { getUniqId } from '@/utils/.';
 import { useModal } from '@/hooks/useModal';
-import { FormDataType } from '@/types/types';
 import { CardType } from '@/types/cards';
 import { RootState } from '@/redux/reducers/.'
 import { 
@@ -14,6 +14,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  Select,
+  MenuItem,
 } from '@material-ui/core';
 import { Add, Close } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
@@ -43,6 +45,9 @@ const useStyles = makeStyles(() => ({
       color: '#6462e2',
     }
   },
+  select: {
+    marginLeft: '.5rem',
+  }
 }));
 
 export const KanbanList: React.FC<KanbanListProps> = React.memo(({
@@ -53,44 +58,54 @@ export const KanbanList: React.FC<KanbanListProps> = React.memo(({
   const classes = useStyles();
   const dispatch = useDispatch();
   const { items: allCards } = useSelector(({ cards }: RootState) => cards);
+  const { items: lists } = useSelector(({ lists }: RootState) => lists);
   const { sortBy } = useSelector(({ sort }: RootState) => sort);
   const { modal, handleModal } = useModal(false);
-  const [createForm, setCreateForm] = useState({ name: '', description: '' });
+  const [createForm, setCreateForm] = useState({
+    name: '', 
+    description: '',
+    priority: 0,
+    statusId: id,
+  });
 
   const handleCreate = (ev: SyntheticEvent) => {
     ev.preventDefault();
 
+    // Add card to redux
     dispatch(addCard({
+      id: getUniqId(),
       ...createForm,
-      id: 100,
-      priority: 0,
       createDate: Date.now(),
-      statusId: id,
     }));
     
+    // Sort cards
     dispatch(setSortedCards({
       items: allCards,
       sortBy,
     }));
 
+    // Clear form
+    setCreateForm({
+      name: '',
+      description: '',
+      priority: 0,
+      statusId: id,
+    });
+
+    // Close modal
     handleModal();
   }
 
-  const handleCreateForm = (ev: ChangeEvent<HTMLInputElement>) => {
-    const formData: FormDataType = {};
+  const handleCreateForm = (
+    ev: ChangeEvent<HTMLInputElement | { value: unknown, name?: any }>
+  ) => {
+    const value = ev.target.name === 'priority'
+      ? Number(ev.target.value)
+      : ev.target.value;
 
-    switch (ev.target.id) {
-      case 'name':
-        formData.name = ev.target.value;
-        break;
-      case 'description':
-        formData.description = ev.target.value;
-        break;
-    }
-
-    setCreateForm({ 
+    setCreateForm({
       ...createForm,
-      ...formData,
+      [ev.target.name]: value,
     });
   }
 
@@ -131,22 +146,54 @@ export const KanbanList: React.FC<KanbanListProps> = React.memo(({
               autoFocus
               margin="dense"
               id="name"
+              name="name"
               label="Name"
               type="text"
+              value={createForm.name}
               fullWidth
               onChange={handleCreateForm}
             />
             <TextField
               margin="dense"
               id="description"
+              name="description"
               label="Description"
               type="text"
+              value={createForm.description}
               fullWidth
               rows={3}
               rowsMax={7}
               multiline
               onChange={handleCreateForm}
             />
+            <Box pt={1} pb={1}>
+              Priority: 
+              <Select
+                labelId="priority"
+                id="priority"
+                name="priority"
+                value={createForm.priority}
+                className={classes.select}
+                onChange={handleCreateForm}
+              >
+                <MenuItem value={0}>Usual</MenuItem>
+                <MenuItem value={1}>High</MenuItem>
+                <MenuItem value={2}>Very high</MenuItem>
+              </Select>
+            </Box>  
+            <Box pt={1} pb={1}>
+              Status: 
+              <Select
+                labelId="priority"
+                id="statusId"
+                name="statusId"
+                value={createForm.statusId}
+                className={classes.select}
+                onChange={handleCreateForm}
+              >
+                {lists.map(({ id, name }) => <MenuItem key={id} value={id}>{name}</MenuItem>)}
+              </Select>
+            </Box>
             <Box pt={2} pb={2}>
               <Button
                 variant="contained"

@@ -1,4 +1,5 @@
 import { SortState, SortAction } from '@/types/sort';
+import { SET_SORT } from '@/redux/actions/sort';
 
 const initialState: SortState = {
   sortBy: {
@@ -12,7 +13,7 @@ export const sort = (
     action: SortAction,
 ): SortState => {
   switch (action.type) {
-    case 'SET_SORT':
+    case SET_SORT:
       return {
         ...state,
         sortBy: action.payload,

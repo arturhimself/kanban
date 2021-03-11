@@ -1,6 +1,17 @@
 import { SortParams } from '@/types/sort';
 
-export interface CardType {
+export enum CardsActionTypes {
+  SET_CARDS = 'SET_CARDS',
+  SET_SORTED_CARDS = 'SET_SORTED_CARDS',
+  EDIT_CARD = 'EDIT_CARD',
+  ADD_CARD = 'ADD_CARD',
+}
+
+interface IObjectKeys {
+  [key: string]: string | number;
+}
+
+export interface CardType extends IObjectKeys {
   id: number
   name: string
   description: string
@@ -10,27 +21,27 @@ export interface CardType {
 }
 
 export interface SetCardsAction {
-  type: string,
+  type: CardsActionTypes.SET_CARDS,
   payload: CardType[],
 }
 
-export interface SetSortedCardsActionPayload {
+export interface SetSortedCardsPayload {
   items: CardType[],
   sortBy: SortParams,
 }
 
 export interface SetSortedCardsAction {
-  type: string,
-  payload: SetSortedCardsActionPayload,
+  type: CardsActionTypes.SET_SORTED_CARDS,
+  payload: SetSortedCardsPayload,
 }
 
 export interface EditCardAction {
-  type: string,
+  type: CardsActionTypes.EDIT_CARD,
   payload: CardType,
 }
 
 export interface AddCardAction {
-  type: string,
+  type: CardsActionTypes.ADD_CARD,
   payload: CardType,
 }
 
@@ -38,7 +49,7 @@ export interface CardsState {
   items: CardType[],
 }
 
-export type CardsActionTypes = 
+export type CardsAction = 
   SetCardsAction
   | EditCardAction
   | AddCardAction

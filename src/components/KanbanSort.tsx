@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   Select,
@@ -15,7 +15,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export const KanbanSort: React.FC = () => {
+export const KanbanSort: FC = () => {
   const dispatch = useDispatch();
   const [labelSort, setLabelSort] = useState('default');
   const classes = useStyles();

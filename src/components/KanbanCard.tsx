@@ -1,23 +1,18 @@
-import React, { useState, ChangeEvent } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useMemo, ChangeEvent } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/redux/reducers/.'
 import { useModal } from '@/hooks/useModal';
 import { editCard as editCardAction } from '@/redux/actions/cards';
 import { 
   Card,
+  Chip,
   Typography,
   Box,
-  Button,
-  TextField,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  Divider,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Edit, Close } from '@material-ui/icons';
+import { CardModal } from '@/components/CardModal';
 
-interface KanbanCardProps {
+export interface KanbanCardProps {
   id: number
   name: string
   description: string
@@ -26,18 +21,34 @@ interface KanbanCardProps {
   statusId: number,
 }
 
-const useStyles = makeStyles(() => ({
-  closeButton: {
-    position: 'absolute',
-    top: 14,
-    right: 10,
-    fontSize: 35,
-    cursor: 'pointer',
-    zIndex: 10,
-    '&:hover': {
-      color: '#6462e2',
-    },
+export interface Priority {
+  order: number,
+  color: string,
+}
+
+export interface CardEditState {
+  name: string,
+  description: string,
+  priority: number,
+  statusId: number,
+}
+
+const priorities: Priority[] = [
+  {
+    order: 2,
+    color: 'red'
   },
+  {
+    order: 1,
+    color: 'yellow'
+  },
+  {
+    order: 0,
+    color: 'green'
+  }
+];
+
+const useStyles = makeStyles(() => ({
   card: {
     marginBottom: 15,
     cursor: 'pointer',
@@ -49,19 +60,20 @@ const useStyles = makeStyles(() => ({
   cardBottom: {
     marginTop: 20,
   },
-  editButton: {
-    marginRight: 10,
-  },
-  editIcon: {
-    fontSize: 14,
-    marginRight: '.2em',
-    marginTop: '-.1em',
+  priority: {
+    width: 30,
+    height: 6,
+    '&._red': {
+      background: 'red',
+    },
+    '&._yellow': {
+      background: '#d4d414',
+    },
+    '&._green': {
+      background: 'green',
+    },
   },
 }));
-
-const getFormatedDate = (timestamp: number): string => {
-  return new Date(timestamp).toLocaleDateString();
-}
 
 export const KanbanCard: React.FC<KanbanCardProps> = React.memo(({
   id,
@@ -72,10 +84,15 @@ export const KanbanCard: React.FC<KanbanCardProps> = React.memo(({
   statusId,
 }) => {
   const dispatch = useDispatch();
+  const { items: lists } = useSelector(({ lists }: RootState) => lists);
   const { modal, handleModal } = useModal(false);
   const [editCard, setEditCard] = useState(false);
-  const [cardName, setCardName] = useState(name);
-  const [cardDescription, setCardDescription] = useState(description);
+  const [cardInfo, setCardInfo] = useState<CardEditState>({
+    name,
+    description,
+    priority,
+    statusId,
+  });
   const classes = useStyles();
 
   const handleModalClose = () => {
@@ -90,26 +107,39 @@ export const KanbanCard: React.FC<KanbanCardProps> = React.memo(({
   const handleSaveCard = () => {
     dispatch(editCardAction({
       id,
-      name: cardName,
-      description: cardDescription,
       createDate,
-      priority,
-      statusId
+      ...cardInfo,
     }));
-    setEditCard(!editCard);
+
+    setEditCard(false);
   }
 
-  const handleInput = (ev: ChangeEvent<HTMLInputElement>) => {
-    const newValue = ev.target.value;
+  const handleEditForm = (
+    ev: ChangeEvent<HTMLInputElement | { value: unknown, name?: any }>
+  ) => {
+    const value = ev.target.value;
+    setCardInfo({
+      ...cardInfo,
+      [ev.target.name]: value,
+    });
+  }
 
-    switch (ev.target.id) {
-      case 'name':
-        setCardName(newValue);
-        break;
-      case 'description':
-        setCardDescription(newValue);
-        break;
-    }
+  const getPriority = useMemo((): string | undefined => (
+    priorities.find((item) => item.order === cardInfo.priority)?.color
+  ), [cardInfo]);
+
+
+  const propsForModal = {
+    modal,
+    editCard,
+    handleModalClose,
+    cardInfo,
+    handleEditForm,
+    handleSaveCard,
+    handleEditCard,
+    createDate,
+    priority: getPriority,
+    lists,
   }
 
   return (
@@ -119,82 +149,11 @@ export const KanbanCard: React.FC<KanbanCardProps> = React.memo(({
       onClick={handleModal}
     >
       <Box p={1}>
-        <Typography variant="subtitle1">{cardName} (priority: {priority})</Typography>
+        {getPriority && <Chip className={`${classes.priority} _${getPriority}`}></Chip>}
+        <Typography variant="subtitle1">{cardInfo.name}</Typography>
       </Box>
 
-      <Dialog
-        open={modal || editCard}
-        fullWidth
-        maxWidth="sm"
-        aria-labelledby="dialog-title"
-      >
-        <Close
-          onClick={handleModalClose} 
-          className={classes.closeButton}
-        />
-        <DialogTitle id="dialog-title">
-          {
-            !editCard 
-            ? cardName 
-            : <TextField
-                margin="dense"
-                id="name"
-                label="Name"
-                type="text"
-                fullWidth
-                rowsMax={5}
-                multiline
-                value={cardName}
-                onChange={handleInput}
-              />
-          }
-        </DialogTitle>
-        <Divider />
-        <DialogContent>
-          <div>
-            {
-              !editCard 
-              ? cardDescription
-              : <TextField
-                  margin="dense"
-                  id="description"
-                  label="Description"
-                  type="text"
-                  fullWidth
-                  rows={3}
-                  rowsMax={5}
-                  multiline
-                  value={cardDescription}
-                  onChange={handleInput}
-                />
-            }
-          </div>  
-          <DialogContentText className={classes.cardBottom}>
-            {!editCard ? (
-              <Button 
-                variant="outlined"
-                size="small"
-                className={classes.editButton}
-                onClick={handleEditCard}
-              >
-                <Edit className={classes.editIcon} />
-                Edit
-              </Button>
-            ) : (
-              <Button 
-                variant="contained"
-                color="secondary"
-                size="small"
-                className={classes.editButton}
-                onClick={handleSaveCard}
-              >
-                Ok
-              </Button>
-            )}
-            {`Created at: ${getFormatedDate(createDate)}`}
-          </DialogContentText>  
-        </DialogContent>
-      </Dialog>  
+      <CardModal {...propsForModal} />
     </Card>
   )
 });

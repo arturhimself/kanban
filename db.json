@@ -12,7 +12,7 @@
       "id": 2,
       "name": "Task 1",
       "description": "It's description for Task 1",
-      "priority": 10,
+      "priority": 2,
       "createDate": 1615020847074,
       "statusId": 1
     },
@@ -20,7 +20,7 @@
       "id": 3,
       "name": "Task 1",
       "description": "It's description for Task 1",
-      "priority": 15,
+      "priority": 0,
       "createDate": 1615020847074,
       "statusId": 1
     },
@@ -28,7 +28,7 @@
       "id": 4,
       "name": "Task 2",
       "description": "It's description for Task 2",
-      "priority": 10,
+      "priority": 0,
       "createDate": 1615020847074,
       "statusId": 2
     },
@@ -36,7 +36,7 @@
       "id": 5,
       "name": "Task 3",
       "description": "It's description for Task 3",
-      "priority": 25,
+      "priority": 1,
       "createDate": 1615020847074,
       "statusId": 2
     },
@@ -44,7 +44,7 @@
       "id": 6,
       "name": "Task 3",
       "description": "It's description for Task 3",
-      "priority": 5,
+      "priority": 1,
       "createDate": 1615020847074,
       "statusId": 3
     },
@@ -52,7 +52,7 @@
       "id": 7,
       "name": "Task 3",
       "description": "It's description for Task 3",
-      "priority": 5,
+      "priority": 2,
       "createDate": 1615020847074,
       "statusId": 3
     },
@@ -60,7 +60,7 @@
       "id": 8,
       "name": "Task 4",
       "description": "It's description for Task 4",
-      "priority": 15,
+      "priority": 2,
       "createDate": 1615020847074,
       "statusId": 3
     }

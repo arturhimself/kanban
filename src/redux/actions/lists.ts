@@ -3,8 +3,10 @@ import {
   KanbanListType,
 } from '@/types/lists';
 
+export const SET_LISTS: string = 'SET_LISTS';
+
 export const setLists = (payload: KanbanListType[]): SetListsAction => ({
-  type: 'SET_LISTS',
+  type: SET_LISTS,
   payload,
 });
 
