@@ -67,9 +67,15 @@ export const KanbanList: React.FC<KanbanListProps> = React.memo(({
     priority: 0,
     statusId: id,
   });
+  const [errorName, setErrorName] = useState(false);
 
   const handleCreate = (ev: SyntheticEvent) => {
     ev.preventDefault();
+
+    if (!createForm.name) {
+      setErrorName(true);
+      return;
+    }
 
     // Add card to redux
     dispatch(addCard({
@@ -99,6 +105,10 @@ export const KanbanList: React.FC<KanbanListProps> = React.memo(({
   const handleCreateForm = (
     ev: ChangeEvent<HTMLInputElement | { value: unknown, name?: any }>
   ) => {
+    if (ev.target.name) {
+      setErrorName(false);
+    }
+
     const value = ev.target.name === 'priority'
       ? Number(ev.target.value)
       : ev.target.value;
@@ -143,6 +153,8 @@ export const KanbanList: React.FC<KanbanListProps> = React.memo(({
         <DialogContent>
           <form onSubmit={handleCreate}>
             <TextField
+              error={errorName}
+              helperText={errorName && 'Enter name'}
               autoFocus
               margin="dense"
               id="name"

@@ -29,6 +29,7 @@ interface CardModalProps {
   createDate: number,
   priority: string | undefined,
   lists: KanbanListType[],
+  errorName: boolean,
 }
 
 const useStyles = makeStyles(() => ({
@@ -83,7 +84,6 @@ const useStyles = makeStyles(() => ({
 export const CardModal: FC<CardModalProps> = ({
   modal,
   editCard,
-  handleModalClose,
   cardInfo,
   handleEditForm,
   handleSaveCard,
@@ -91,6 +91,7 @@ export const CardModal: FC<CardModalProps> = ({
   createDate,
   priority,
   lists,
+  errorName,
 }) => {
   const classes = useStyles();
   return (
@@ -112,6 +113,8 @@ export const CardModal: FC<CardModalProps> = ({
         ) : (
           <TextField
             margin="dense"
+            error={errorName}
+            helperText={errorName && 'Enter name'}
             name="name"
             label="Name"
             type="text"

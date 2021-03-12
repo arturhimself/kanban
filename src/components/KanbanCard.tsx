@@ -87,6 +87,7 @@ export const KanbanCard: React.FC<KanbanCardProps> = React.memo(({
   const { items: lists } = useSelector(({ lists }: RootState) => lists);
   const { modal, handleModal } = useModal(false);
   const [editCard, setEditCard] = useState(false);
+  const [errorName, setErrorName] = useState(false);
   const [cardInfo, setCardInfo] = useState<CardEditState>({
     name,
     description,
@@ -105,6 +106,12 @@ export const KanbanCard: React.FC<KanbanCardProps> = React.memo(({
   }
 
   const handleSaveCard = () => {
+    if (errorName) {
+      cardInfo.name = name;
+      setErrorName(false);
+      return;
+    };
+
     dispatch(editCardAction({
       id,
       createDate,
@@ -118,6 +125,14 @@ export const KanbanCard: React.FC<KanbanCardProps> = React.memo(({
     ev: ChangeEvent<HTMLInputElement | { value: unknown, name?: any }>
   ) => {
     const value = ev.target.value;
+    const name = ev.target.name;
+
+    if (name === 'name' && value === '') {
+      setErrorName(true);
+    } else if (name === 'name') {
+      setErrorName(false);
+    }
+
     setCardInfo({
       ...cardInfo,
       [ev.target.name]: value,
@@ -140,6 +155,7 @@ export const KanbanCard: React.FC<KanbanCardProps> = React.memo(({
     createDate,
     priority: getPriority,
     lists,
+    errorName,
   }
 
   return (
